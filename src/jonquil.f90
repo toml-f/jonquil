@@ -16,9 +16,10 @@ module jonquil
    use tomlf, only : get_value, set_value, json_path => toml_path, &
       & json_context => toml_context, json_parser_config => toml_parser_config, &
       & json_level => toml_level, json_error => toml_error, json_stat => toml_stat, &
-      & json_terminal => toml_terminal, json_table => toml_table, json_array => toml_array, &
+      & json_terminal => toml_terminal, json_object => toml_table, json_array => toml_array, &
       & json_keyval => toml_keyval, json_key => toml_key, json_value => toml_value, &
-      & new_table, add_table, add_array, add_keyval, sort, len
+      & new_object => new_table, add_object => add_table, add_array, add_keyval, sort, len
+   use tomlf_type, only : cast_to_object => cast_to_table, cast_to_array, cast_to_keyval
    use tomlf_version, only : tomlf_version_string, tomlf_version_compact, get_tomlf_version
    use jonquil_parser, only : json_load, json_loads
    implicit none
