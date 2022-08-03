@@ -12,10 +12,11 @@
 # limitations under the License.
 
 option(BUILD_SHARED_LIBS "Whether the libraries built should be shared" FALSE)
+option(ENABLE_TESTING "Whether the libraries built should be tested" TRUE)
 
 set(
   "${PROJECT_NAME}-module-dir"
-  "${PROJECT_NAME}/${CMAKE_Fortran_COMPILER_ID}-${CMAKE_Fortran_COMPILER_VERSION}"
+  "${PROJECT_NAME}/modules"
   CACHE STRING
   "Subdirectory to install generated module files to"
 )
