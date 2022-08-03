@@ -75,3 +75,6 @@ if install
     subdirs: ['', module_id],
   )
 endif
+
+# add the testsuite
+subdir('test')

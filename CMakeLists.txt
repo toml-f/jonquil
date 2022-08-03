@@ -28,6 +28,9 @@ include(GNUInstallDirs)
 add_subdirectory("config")
 
 # Collect subprojects
+if(NOT TARGET "test-drive::test-drive" AND ENABLE_TESTING)
+  find_package("test-drive" REQUIRED)
+endif()
 if(NOT TARGET "toml-f::toml-f")
   find_package("toml-f" REQUIRED)
 endif()
@@ -97,3 +100,9 @@ install(
   "LICENSE-MIT"
   DESTINATION "${CMAKE_INSTALL_DATADIR}/licenses/${PROJECT_NAME}"
 )
+
+if(ENABLE_TESTING)
+  # add the testsuite
+  enable_testing()
+  add_subdirectory("test")
+endif()

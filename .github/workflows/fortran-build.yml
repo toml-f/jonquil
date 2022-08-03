@@ -1,0 +1,178 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  gcc-build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        gcc-v: [9]
+        build-type: [default]
+
+        include:
+          - os: macos-latest
+            gcc-v: 6
+            build-type: default
+          - os: ubuntu-latest
+            gcc-v: 7
+            build-type: default
+          - os: ubuntu-latest
+            gcc-v: 8
+            build-type: default
+          - os: ubuntu-latest
+            gcc-v: 9
+            build-type: coverage
+          - os: ubuntu-latest
+            gcc-v: 10
+            build-type: coverage
+          - os: ubuntu-latest
+            gcc-v: 11
+            build-type: coverage
+
+    defaults:
+      run:
+        shell: ${{ contains(matrix.os, 'windows') && 'msys2 {0}' || 'bash -l {0}' }}
+
+    env:
+      FC: gfortran
+      GCC_V: ${{ matrix.gcc-v }}
+      OMP_NUM_THREADS: 2,1
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+
+    - name: Install GCC (OSX)
+      if: ${{ contains(matrix.os, 'macos') }}
+      run: |
+          brew install gcc@${{ env.GCC_V }}
+          ln -s /usr/local/bin/gfortran-${{ env.GCC_V }} /usr/local/bin/gfortran
+          which gfortran-${{ env.GCC_V }}
+          which gfortran
+
+    - name: Install GCC (Linux)
+      if: ${{ contains(matrix.os, 'ubuntu') }}
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt-get update
+        sudo apt-get install -y gcc-${{ env.GCC_V }} gfortran-${{ env.GCC_V }}
+        sudo update-alternatives \
+        --install /usr/bin/gcc gcc /usr/bin/gcc-${{ env.GCC_V }} 100 \
+        --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-${{ env.GCC_V }} \
+        --slave /usr/bin/gcov gcov /usr/bin/gcov-${{ env.GCC_V }}
+
+    - name: Install GCC (Windows)
+      if: ${{ contains(matrix.os, 'windows') }}
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ucrt64
+        update: false
+        path-type: inherit
+        pacboy: >-
+          gcc-fortran:p
+          cmake:p
+          meson:p
+          ninja:p
+
+    - name: Install meson/cmake
+      if: ${{ ! contains(matrix.os, 'windows') }}
+      run: pip3 install meson cmake ninja gcovr
+
+    - name: Configure meson build
+      run: meson setup build ${{ env.meson_args }}
+      env:
+        meson_args: >-
+          ${{ matrix.build-type == 'coverage' && '-Db_coverage=true' || '' }}
+
+    - name: Build library (meson)
+      run: meson compile -C build
+
+    - name: Run unit tests (meson)
+      run: meson test -C build --print-errorlogs --no-rebuild
+
+    - name: Create coverage report
+      if: ${{ matrix.build-type == 'coverage' }}
+      run:
+         ninja -C build coverage
+
+    - name: Configure cmake build
+      run: cmake -B _build -G Ninja
+
+    - name: Build library (CMake)
+      run: cmake --build _build
+
+    - name: Run unit tests (CTest)
+      run: |
+        pushd _build
+        ctest
+        popd
+
+    - name: Upload coverage report
+      if: ${{ matrix.build-type == 'coverage' }}
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+
+  intel-build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+
+    env:
+      FC: ifort
+      OMP_NUM_THREADS: 2,1
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+
+    - name: Add Intel repository
+      run: |
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+        echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+        sudo apt-get update
+
+    - name: Install Intel oneAPI compiler
+      run: |
+        sudo apt-get install intel-oneapi-compiler-fortran
+        source /opt/intel/oneapi/setvars.sh
+        printenv >> $GITHUB_ENV
+
+    - name: Install meson/cmake
+      run: pip3 install meson cmake ninja
+
+    - name: Configure meson build
+      run: meson setup build
+
+    - name: Build library (meson)
+      run: meson compile -C build
+
+    - name: Run unit tests (meson)
+      run: meson test -C build --print-errorlogs --no-rebuild
+
+    - name: Configure cmake build
+      run: cmake -B _build -G Ninja
+
+    - name: Build library (CMake)
+      run: cmake --build _build
+
+    - name: Run unit tests (CTest)
+      run: |
+        pushd _build
+        ctest
+        popd
