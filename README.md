@@ -13,6 +13,10 @@ The goal of Jonquil is not to provide the most conforming JSON library, but to p
 * [JSON specification](https://www.json.org/json-en.html)
 * [TOML Fortran documentation](https://toml-f.readthedocs.io)
 
+<div align="center">
+<img src="./assets/jonquil.svg" alt="Jonquil Blossoms" width="220">
+</div>
+
 
 ## Installation
 
