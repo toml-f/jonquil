@@ -22,6 +22,7 @@ module jonquil
    use tomlf_type, only : cast_to_object => cast_to_table, cast_to_array, cast_to_keyval
    use tomlf_version, only : tomlf_version_string, tomlf_version_compact, get_tomlf_version
    use jonquil_parser, only : json_load, json_loads
+   use jonquil_ser, only : json_serializer, json_serialize
    implicit none
    public
 

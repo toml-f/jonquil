@@ -14,4 +14,5 @@
 srcs += files(
   'lexer.f90',
   'parser.f90',
+  'ser.f90',
 )
