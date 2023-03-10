@@ -1,4 +1,4 @@
-! This file is part of toml-f.
+! This file is part of jonquil.
 ! SPDX-Identifier: Apache-2.0 OR MIT
 !
 ! Licensed under either of Apache License, Version 2.0 or MIT license

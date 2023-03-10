@@ -1,4 +1,4 @@
-! This file is part of toml-f.
+! This file is part of jonquil.
 ! SPDX-Identifier: Apache-2.0 OR MIT
 !
 ! Licensed under either of Apache License, Version 2.0 or MIT license
@@ -11,18 +11,47 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-!> Implementation of a serializer for TOML values to JSON, used for testing only.
+!> Implementation of a serializer for TOML values to JSON.
 module jonquil_ser
    use tomlf_constants
    use tomlf_datetime
    use tomlf_type, only : toml_value, toml_visitor, toml_key, toml_table, &
       & toml_array, toml_keyval, is_array_of_tables, len
+   use tomlf_error, only : toml_error, toml_stat, make_error
    use tomlf_utils, only : to_string
    implicit none
    private
 
-   public :: json_serializer
-   public :: json_serialize
+   public :: json_serializer, json_ser_config
+   public :: json_dumps, json_dump, json_serialize
+
+
+   interface json_dumps
+      module procedure :: json_dump_to_string
+   end interface json_dumps
+
+   interface json_dump
+      module procedure :: json_dump_to_file
+      module procedure :: json_dump_to_unit
+   end interface json_dump
+
+
+   !> Configuration for JSON serializer
+   type :: json_ser_config
+
+      !> Write literal NaN
+      logical :: literal_nan = .false.
+
+      !> Write literal Inf
+      logical :: literal_inf = .false.
+
+      !> Write literal datetime
+      logical :: literal_datetime = .false.
+
+      !> Indentation
+      character(len=:), allocatable :: indent
+
+   end type json_ser_config
 
 
    !> Serializer to produduce a JSON document from a TOML datastructure
@@ -31,8 +60,8 @@ module jonquil_ser
       !> Output string
       character(len=:), allocatable :: output
 
-      !> Indentation
-      character(len=:), allocatable :: indentation
+      !> Configuration for serializer
+      type(json_ser_config) :: config = json_ser_config()
 
       !> Current depth in the tree
       integer :: depth = 0
@@ -48,20 +77,111 @@ module jonquil_ser
 contains
 
 
-function json_serialize(val) result(string)
+!> Serialize a JSON value to a string and return it.
+!>
+!> In case of an error this function will invoke an error stop.
+function json_serialize(val, config) result(string)
    !> TOML value to visit
    class(toml_value), intent(inout) :: val
+
+   !> Configuration for serializer
+   type(json_ser_config), intent(in), optional :: config
 
    !> Serialized JSON value
    character(len=:), allocatable :: string
 
+   type(toml_error), allocatable :: error
+
+   call json_dumps(val, string, error, config=config)
+   if (allocated(error)) then
+      error stop error%message
+   end if
+end function json_serialize
+
+
+!> Create a string representing the JSON value
+subroutine json_dump_to_string(val, string, error, config)
+
+   !> TOML value to visit
+   class(toml_value), intent(inout) :: val
+
+   !> Formatted unit to write to
+   character(:), allocatable, intent(out) :: string
+
+   !> Error handling
+   type(toml_error), allocatable, intent(out) :: error
+
+   !> Configuration for serializer
+   type(json_ser_config), intent(in), optional :: config
+
    type(json_serializer) :: ser
 
    ser = json_serializer()
+   if (present(config)) ser%config = config
    call val%accept(ser)
    string = ser%output
+end subroutine json_dump_to_string
 
-end function json_serialize
+
+!> Write string representation of JSON value to a connected formatted unit
+subroutine json_dump_to_unit(val, io, error, config)
+
+   !> TOML value to visit
+   class(toml_value), intent(inout) :: val
+
+   !> Formatted unit to write to
+   integer, intent(in) :: io
+
+   !> Error handling
+   type(toml_error), allocatable, intent(out) :: error
+
+   !> Configuration for serializer
+   type(json_ser_config), intent(in), optional :: config
+
+   character(len=:), allocatable :: string
+   character(512) :: msg
+   integer :: stat
+
+   call json_dumps(val, string, error, config=config)
+   if (allocated(error)) return
+   write(io, '(a)', iostat=stat, iomsg=msg) string
+   if (stat /= 0) then
+      call make_error(error, trim(msg))
+      return
+   end if
+end subroutine json_dump_to_unit
+
+
+!> Write string representation of JSON value to a file
+subroutine json_dump_to_file(val, filename, error, config)
+
+   !> TOML value to visit
+   class(toml_value), intent(inout) :: val
+
+   !> File name to write to
+   character(*), intent(in) :: filename
+
+   !> Error handling
+   type(toml_error), allocatable, intent(out) :: error
+
+   !> Configuration for serializer
+   type(json_ser_config), intent(in), optional :: config
+
+   integer :: io
+   integer :: stat
+   character(512) :: msg
+
+   open(file=filename, newunit=io, iostat=stat, iomsg=msg)
+   if (stat /= 0) then
+      call make_error(error, trim(msg))
+      return
+   end if
+   call json_dump(val, io, error, config=config)
+   close(unit=io, iostat=stat, iomsg=msg)
+   if (.not.allocated(error) .and. stat /= 0) then
+      call make_error(error, trim(msg))
+   end if
+end subroutine json_dump_to_file
 
 
 !> Visit a TOML value
@@ -134,18 +254,34 @@ subroutine visit_keyval(visitor, keyval)
    case(toml_type%float)
       call keyval%get(fdummy)
       if (fdummy > huge(fdummy)) then
-         visitor%output = visitor%output // """+inf"""
+         if (visitor%config%literal_inf) then
+            visitor%output = visitor%output // "+inf"
+         else
+            visitor%output = visitor%output // """+inf"""
+         end if
       else if (fdummy < -huge(fdummy)) then
-         visitor%output = visitor%output // """-inf"""
+         if (visitor%config%literal_inf) then
+            visitor%output = visitor%output // "-inf"
+         else
+            visitor%output = visitor%output // """-inf"""
+         end if
       else if (fdummy /= fdummy) then
-         visitor%output = visitor%output // """nan"""
+         if (visitor%config%literal_nan) then
+            visitor%output = visitor%output // "nan"
+         else
+            visitor%output = visitor%output // """nan"""
+         end if
       else
          visitor%output = visitor%output // to_string(fdummy)
       end if
 
    case(toml_type%datetime)
       call keyval%get(ts)
-      visitor%output = visitor%output // """" // to_string(ts) // """"
+      if (visitor%config%literal_datetime) then
+         visitor%output = visitor%output // to_string(ts)
+      else
+         visitor%output = visitor%output // """" // to_string(ts) // """"
+      end if
 
    end select
 
@@ -223,7 +359,7 @@ subroutine visit_table(visitor, table)
    visitor%depth = visitor%depth - 1
    call indent(visitor)
    if (visitor%depth == 0) then
-      if (allocated(visitor%indentation)) visitor%output = visitor%output // new_line('a')
+      if (allocated(visitor%config%indent)) visitor%output = visitor%output // new_line('a')
       visitor%output = visitor%output // "}" // new_line('a')
    else
       visitor%output = visitor%output // "}"
@@ -241,10 +377,10 @@ subroutine indent(self)
    integer :: i
 
    ! PGI internal compiler error in NVHPC 20.7 and 20.9 with
-   ! write(self%unit, '(/, a)', advance='no') repeat(self%indentation, self%depth)
+   ! write(self%unit, '(/, a)', advance='no') repeat(self%config%indent, self%depth)
    ! causes: NVFORTRAN-F-0000-Internal compiler error. Errors in Lowering      16
-   if (allocated(self%indentation) .and. self%depth > 0) then
-      self%output = self%output // new_line('a') // repeat(self%indentation, self%depth)
+   if (allocated(self%config%indent) .and. self%depth > 0) then
+      self%output = self%output // new_line('a') // repeat(self%config%indent, self%depth)
    end if
 
 end subroutine indent
