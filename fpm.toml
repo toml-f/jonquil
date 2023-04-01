@@ -1,15 +1,16 @@
 name = "jonquil"
-version = "0.1.0"
+version = "0.2.0"
 license = "Apache-2.0 OR MIT"
 maintainer = ["@awvwgk"]
 author = ["Sebastian Ehlert"]
 copyright = "2022 Sebastian Ehlert"
-homepage = "https://toml-f.readthedocs.io/en/latest/tutorial/json/"
+homepage = "https://toml-f.readthedocs.io/en/latest/how-to/jonquil/"
 keywords = ["json", "io", "serde"]
 description = "Bringing TOML blooms to JSON land"
 
 [dependencies]
 toml-f.git = "https://github.com/toml-f/toml-f"
+toml-f.tag = "v0.4.0"
 
 [[test]]
 name = "jqtest"

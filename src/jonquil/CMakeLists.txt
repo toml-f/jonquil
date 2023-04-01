@@ -18,6 +18,7 @@ list(
   "${dir}/lexer.f90"
   "${dir}/parser.f90"
   "${dir}/ser.f90"
+  "${dir}/version.f90"
 )
 
 set(srcs "${srcs}" PARENT_SCOPE)
