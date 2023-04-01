@@ -21,6 +21,8 @@ module jonquil
       & new_object => new_table, add_object => add_table, add_array, add_keyval, sort, len
    use tomlf_type, only : cast_to_object => cast_to_table, cast_to_array, cast_to_keyval
    use tomlf_version, only : tomlf_version_string, tomlf_version_compact, get_tomlf_version
+   use jonquil_version, only : jonquil_version_string, jonquil_version_compact, &
+      & get_jonquil_version
    use jonquil_parser, only : json_load, json_loads
    use jonquil_ser, only : json_serializer, json_serialize, json_dump, json_dumps, &
       & json_ser_config
