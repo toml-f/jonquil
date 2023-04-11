@@ -344,7 +344,7 @@ subroutine visit_table(visitor, table)
       visitor%output = visitor%output // """" // key // """: "
    end if
 
-   visitor%output = visitor%output // ","
+   visitor%output = visitor%output // "{"
    visitor%depth = visitor%depth + 1
 
    call table%get_keys(list)
