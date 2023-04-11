@@ -52,7 +52,7 @@ endif
 
 tomlf_dep = dependency(
   'toml-f',
-  version: '>=0.3.0',
+  version: '>=0.4.0',
   fallback: ['toml-f', 'tomlf_dep'],
   default_options: [
     'default_library=static',
