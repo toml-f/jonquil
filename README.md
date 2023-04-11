@@ -122,7 +122,7 @@ fpm test
 
 ## Usage
 
-You can follow all recipes and tutorials in the [TOML Fortran documentation](https://toml-f.readthedocs) using Jonquil by just replacing the *tomlf* module with the *jonquil* module.
+You can follow all recipes and tutorials in the [TOML Fortran documentation](https://toml-f.readthedocs.io) using Jonquil by just replacing the *tomlf* module with the *jonquil* module.
 All derived types, procedure names and interfaces use the *json\_* prefix instead of *toml\_*, with the exception of the *toml\_table* type which becomes a *json\_object*.
 
 The following example program shows how to load JSON data from a string and access the value using the build interface as well as the compatibility of with TOML Fortran.
