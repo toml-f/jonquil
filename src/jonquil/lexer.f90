@@ -182,10 +182,10 @@ subroutine next_token(lexer, token)
    select case(lexer%chunk(pos:pos))
    case(" ", toml_escape%tabulator, toml_escape%newline, toml_escape%carriage_return)
       if (pos<len(lexer%chunk)) then
-      do while(any(lexer%chunk(pos+1:pos+1) == [" ", toml_escape%tabulator, &
-            & toml_escape%newline, toml_escape%carriage_return]) .and. pos < len(lexer%chunk))
-         pos = pos + 1
-      end do
+          do while(any(lexer%chunk(pos+1:pos+1) == [" ", toml_escape%tabulator, &
+                & toml_escape%newline, toml_escape%carriage_return]) .and. pos < len(lexer%chunk))
+             pos = pos + 1
+          end do
       endif
       token = toml_token(token_kind%whitespace, prev, pos)
       return
@@ -219,9 +219,11 @@ subroutine next_token(lexer, token)
    end select
 
    ! If the current token is invalid, advance to the next terminator
-   do while(verify(lexer%chunk(pos+1:pos+1), terminated) > 0 .and. pos < len(lexer%chunk))
-      pos = pos + 1
-   end do
+   if (pos < len(lexer%chunk)) then
+       do while(verify(lexer%chunk(pos+1:pos+1), terminated) > 0 .and. pos < len(lexer%chunk))
+          pos = pos + 1
+       end do
+   endif
    token = toml_token(token_kind%invalid, prev, pos)
 end subroutine next_token
 
@@ -340,9 +342,11 @@ subroutine next_boolean(lexer, token)
    prev = lexer%pos
    pos = lexer%pos
 
-   do while(verify(lexer%chunk(pos+1:pos+1), terminated) > 0 .and. pos < len(lexer%chunk))
-      pos = pos + 1
-   end do
+   if (pos < len(lexer%chunk)) then
+       do while(verify(lexer%chunk(pos+1:pos+1), terminated) > 0 .and. pos < len(lexer%chunk))
+          pos = pos + 1
+       end do
+   endif
 
    select case(lexer%chunk(prev:pos))
    case default
