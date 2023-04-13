@@ -97,7 +97,7 @@ subroutine new_lexer_from_unit(lexer, io, error)
 
    case("sequential", "SEQUENTIAL")
       allocate(character(0) :: source)
-      do 
+      do
          call read_whole_line(io, line, stat)
          if (stat > 0) exit
          source = source // line // toml_escape%newline
@@ -181,10 +181,12 @@ subroutine next_token(lexer, token)
 
    select case(lexer%chunk(pos:pos))
    case(" ", toml_escape%tabulator, toml_escape%newline, toml_escape%carriage_return)
+      if (pos<len(lexer%chunk)) then
       do while(any(lexer%chunk(pos+1:pos+1) == [" ", toml_escape%tabulator, &
             & toml_escape%newline, toml_escape%carriage_return]) .and. pos < len(lexer%chunk))
          pos = pos + 1
       end do
+      endif
       token = toml_token(token_kind%whitespace, prev, pos)
       return
    case(":")
