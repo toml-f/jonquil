@@ -181,13 +181,10 @@ subroutine next_token(lexer, token)
 
    select case(lexer%chunk(pos:pos))
    case(" ", toml_escape%tabulator, toml_escape%newline, toml_escape%carriage_return)
-      do pos=pos,len(lexer%chunk)-1
-         if(.not. (any( &
-                     & lexer%chunk(pos+1:pos+1) == [" ", &
-                     & toml_escape%tabulator,&
-                     & toml_escape%newline, &
-                     & toml_escape%carriage_return]&
-                     & )) )exit
+      do pos = pos, len(lexer%chunk) - 1
+         if (all(lexer%chunk(pos+1:pos+1) /= [" ", toml_escape%tabulator,&
+            & toml_escape%newline, toml_escape%carriage_return])) &
+            & exit
       end do
 
       token = toml_token(token_kind%whitespace, prev, pos)
