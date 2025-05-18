@@ -1,10 +1,10 @@
 name = "jonquil"
-version = "0.2.0"
+version = "0.3.0"
 license = "Apache-2.0 OR MIT"
 maintainer = ["@awvwgk"]
 author = ["Sebastian Ehlert"]
 copyright = "2022 Sebastian Ehlert"
-homepage = "https://toml-f.readthedocs.io/en/latest/how-to/jonquil/"
+homepage = "https://toml-f.readthedocs.io/en/latest/how-to/jonquil.html"
 keywords = ["json", "io", "serde"]
 description = "Bringing TOML blooms to JSON land"
 
