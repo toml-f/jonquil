@@ -213,6 +213,9 @@ subroutine next_token(lexer, token)
    case("t", "f")
       call next_boolean(lexer, token)
       return
+   case("n")
+      call next_nil(lexer, token)
+      return
    case(",")
       token = toml_token(token_kind%comma, prev, pos)
       return
@@ -351,6 +354,30 @@ subroutine next_boolean(lexer, token)
       token = toml_token(token_kind%bool, prev, pos)
    end select
 end subroutine next_boolean
+
+!> Process next nil token
+subroutine next_nil(lexer, token)
+   !> Instance of the lexer
+   type(json_lexer), intent(inout) :: lexer
+   !> Current token
+   type(toml_token), intent(inout) :: token
+
+   integer :: pos, prev
+
+   prev = lexer%pos
+   pos = lexer%pos
+
+   do pos=lexer%pos,len(lexer%chunk)-1
+      if (verify(lexer%chunk(pos+1:pos+1), terminated) <= 0) exit
+   end do
+
+   select case(lexer%chunk(prev:pos))
+   case default
+      token = toml_token(token_kind%invalid, prev, pos)
+   case("null")
+      token = toml_token(token_kind%nil, prev, pos)
+   end select
+end subroutine next_nil
 
 !> Validate characters in string, non-printable characters are invalid in this context
 pure function valid_string(ch) result(valid)
