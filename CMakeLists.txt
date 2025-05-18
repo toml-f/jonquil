@@ -17,7 +17,7 @@ get_directory_property(is-subproject PARENT_DIRECTORY)
 project(
   "jonquil"
   LANGUAGES "Fortran"
-  VERSION "0.2.0"
+  VERSION "0.3.0"
   DESCRIPTION "Bringing TOML blooms to JSON land"
 )
 
