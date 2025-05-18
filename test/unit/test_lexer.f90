@@ -47,6 +47,7 @@ subroutine collect_lexer(testsuite)
       & new_unittest("float-invalid", float_invalid), &
       & new_unittest("integer-limits", integer_limits), &
       & new_unittest("integer-leading-zero", integer_leading_zero), &
+      & new_unittest("nil", nil), &
       & new_unittest("string", string), &
       & new_unittest("string-unclosed", string_unclosed), &
       & new_unittest("string-control", string_control), &
@@ -313,6 +314,15 @@ subroutine integer_leading_zero(error)
    call check_token(error, "001", &
       & [token_kind%invalid, token_kind%eof])
 end subroutine integer_leading_zero
+
+subroutine nil(error)
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   call check_token(error, "nil,none,null", &
+      & [token_kind%invalid, token_kind%comma, token_kind%invalid, token_kind%comma, &
+      &  token_kind%nil, token_kind%eof])
+end subroutine nil
 
 subroutine token_integer(error)
    !> Error handling
