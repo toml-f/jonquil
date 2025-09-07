@@ -23,12 +23,13 @@ project(
 
 # Follow GNU conventions for installing directories
 include(GNUInstallDirs)
+include(CTest) # option(BUILD_TESTING). ON by default.
 
 # General configuration information
 add_subdirectory("config")
 
 # Collect subprojects
-if(NOT TARGET "test-drive::test-drive" AND ENABLE_TESTING)
+if(NOT TARGET "test-drive::test-drive" AND BUILD_TESTING)
   find_package("test-drive" REQUIRED)
 endif()
 if(NOT TARGET "toml-f::toml-f")
@@ -101,7 +102,7 @@ install(
   DESTINATION "${CMAKE_INSTALL_DATADIR}/licenses/${PROJECT_NAME}"
 )
 
-if(ENABLE_TESTING)
+if(BUILD_TESTING)
   # add the testsuite
   enable_testing()
   add_subdirectory("test")
