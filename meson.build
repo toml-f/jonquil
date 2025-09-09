@@ -77,4 +77,6 @@ if install
 endif
 
 # add the testsuite
-subdir('test')
+if get_option('tests')
+  subdir('test')
+endif
