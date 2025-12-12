@@ -11,7 +11,42 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-!> Implementation of a serializer for TOML values to JSON.
+!> JSON serializer implementation.
+!>
+!> This module provides procedures and types for serializing TOML Fortran
+!> data structures to JSON format.
+!>
+!> ## Main Interfaces
+!>
+!> - [[json_dump]] - Write JSON to a file or unit
+!> - [[json_dumps]] - Write JSON to a string
+!> - [[json_serialize]] - Serialize and return as string (convenience function)
+!>
+!> ## Configuration
+!>
+!> The [[json_ser_config]] type allows customizing the serialization output:
+!>
+!> - `indent` - String used for indentation (e.g., `"  "` for 2 spaces)
+!> - `literal_nan` - Write NaN as literal instead of string
+!> - `literal_inf` - Write Inf as literal instead of string
+!> - `literal_datetime` - Write datetime as literal instead of string
+!>
+!> ## Example
+!>
+!> ```fortran
+!> use jonquil, only : json_object, json_dumps, json_ser_config, &
+!>    & new_object, set_value
+!> type(json_object) :: obj
+!> type(json_ser_config) :: config
+!> character(:), allocatable :: str
+!>
+!> call new_object(obj)
+!> call set_value(obj, "key", "value")
+!>
+!> config%indent = "  "  ! Pretty print with 2-space indent
+!> call json_dumps(obj, str, config=config)
+!> print '(a)', str
+!> ```
 module jonquil_ser
    use tomlf_constants
    use tomlf_datetime

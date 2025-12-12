@@ -11,6 +11,32 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
+!> JSON parser implementation.
+!>
+!> This module provides procedures for parsing JSON documents into TOML Fortran
+!> data structures. It reuses the TOML Fortran parser infrastructure with a
+!> custom JSON lexer.
+!>
+!> ## Main Interfaces
+!>
+!> - [[json_load]] - Load JSON from a file or unit
+!> - [[json_loads]] - Load JSON from a string
+!>
+!> ## Example
+!>
+!> ```fortran
+!> use jonquil, only : json_loads, json_value, json_object, json_error, &
+!>    & cast_to_object, get_value
+!> class(json_value), allocatable :: val
+!> type(json_object), pointer :: obj
+!> type(json_error), allocatable :: error
+!> integer :: num
+!>
+!> call json_loads(val, '{"count": 42}', error=error)
+!> obj => cast_to_object(val)
+!> call get_value(obj, "count", num)
+!> print '(a,i0)', "count = ", num
+!> ```
 module jonquil_parser
    use tomlf_constants, only : tfc, tfi, tfr, toml_type
    use tomlf_datetime, only : toml_datetime
