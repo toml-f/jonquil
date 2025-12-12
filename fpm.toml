@@ -17,3 +17,40 @@ name = "jqtest"
 source-dir = "test/unit"
 [test.dependencies]
 test-drive.git = "https://github.com/fortran-lang/test-drive.git"
+
+[extra.ford]
+project = "Jonquil"
+summary = "Bringing TOML blooms to JSON land - JSON parser and serializer for Fortran"
+favicon = "./assets/jonquil.svg"
+project_github = "https://github.com/toml-f/jonquil"
+project_download = "https://github.com/toml-f/jonquil/releases"
+project_website = "https://toml-f.readthedocs.io/en/latest/how-to/jonquil.html"
+author = "Sebastian Ehlert"
+github = "https://github.com/awvwgk"
+src_dir = ["./src"]
+exclude_dir = ["./test"]
+media_dir = "./assets"
+docmark = "<"
+predocmark = ">"
+source = true
+graph = true
+sort = "alpha"
+print_creation_date = true
+creation_date = "%Y-%m-%d %H:%M %z"
+md_extensions = ["markdown.extensions.toc", "markdown.extensions.smarty"]
+
+[extra.ford.extra_mods]
+iso_fortran_env = "https://gcc.gnu.org/onlinedocs/gfortran/ISO_005fFORTRAN_005fENV.html"
+tomlf = "https://toml-f.github.io/toml-f/module/tomlf.html"
+tomlf_build = "https://toml-f.github.io/toml-f/module/tomlf_build.html"
+tomlf_constants = "https://toml-f.github.io/toml-f/module/tomlf_constants.html"
+tomlf_datetime = "https://toml-f.github.io/toml-f/module/tomlf_datetime.html"
+tomlf_de_abc = "https://toml-f.github.io/toml-f/module/tomlf_de_abc.html"
+tomlf_de_context = "https://toml-f.github.io/toml-f/module/tomlf_de_context.html"
+tomlf_de_parser = "https://toml-f.github.io/toml-f/module/tomlf_de_parser.html"
+tomlf_de_token = "https://toml-f.github.io/toml-f/module/tomlf_de_token.html"
+tomlf_error = "https://toml-f.github.io/toml-f/module/tomlf_error.html"
+tomlf_diagnostic = "https://toml-f.github.io/toml-f/module/tomlf_diagnostic.html"
+tomlf_type = "https://toml-f.github.io/toml-f/module/tomlf_type.html"
+tomlf_utils = "https://toml-f.github.io/toml-f/module/tomlf_utils.html"
+tomlf_version = "https://toml-f.github.io/toml-f/module/tomlf_version.html"
