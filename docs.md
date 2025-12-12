@@ -1,5 +1,3 @@
-# Jonquil API Documentation
-
 This is the API documentation for Jonquil, a JSON parser and serializer for Fortran built on top of [TOML Fortran](https://toml-f.github.io/toml-f/).
 
 ## Getting Started

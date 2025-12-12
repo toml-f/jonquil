@@ -11,7 +11,7 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-!> Version information on jonquil
+!> Version information for the Jonquil library.
 module jonquil_version
    implicit none
    private
