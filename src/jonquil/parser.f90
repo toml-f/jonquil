@@ -137,7 +137,7 @@ subroutine prune(object, table)
 end subroutine prune
 
 !> Visit a TOML value
-subroutine visit(self, val)
+recursive subroutine visit(self, val)
    !> Instance of the JSON pruner
    class(json_prune), intent(inout) :: self
    !> TOML value to visit
@@ -152,7 +152,7 @@ subroutine visit(self, val)
 end subroutine visit
 
 !> Visit a TOML array
-subroutine visit_array(visitor, array)
+recursive subroutine visit_array(visitor, array)
    !> Instance of the JSON pruner
    class(json_prune), intent(inout) :: visitor
    !> TOML value to visit
@@ -187,7 +187,7 @@ subroutine visit_array(visitor, array)
 end subroutine visit_array
 
 !> Visit a TOML table
-subroutine visit_table(visitor, table)
+recursive subroutine visit_table(visitor, table)
    !> Instance of the JSON pruner
    class(json_prune), intent(inout) :: visitor
    !> TOML table to visit
