@@ -66,7 +66,7 @@ The following cache variables may be set to influence the library detection:
 set(_lib "toml-f")
 set(_pkg "TOML_FORTRAN")
 set(_url "https://github.com/toml-f/toml-f")
-set(_rev "HEAD")
+set(_rev "v0.5.0")
 
 if(NOT DEFINED "${_pkg}_FIND_METHOD")
   if(DEFINED "${PROJECT_NAME}-dependency-method")
