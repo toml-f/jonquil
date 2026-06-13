@@ -1,5 +1,5 @@
 name = "jonquil"
-version = "0.3.0"
+version = "0.3.1"
 license = "Apache-2.0 OR MIT"
 maintainer = ["@awvwgk"]
 author = ["Sebastian Ehlert"]
@@ -10,7 +10,7 @@ description = "Bringing TOML blooms to JSON land"
 
 [dependencies]
 toml-f.git = "https://github.com/toml-f/toml-f"
-toml-f.tag = "v0.4.1"
+toml-f.tag = "v0.5.0"
 
 [[test]]
 name = "jqtest"
