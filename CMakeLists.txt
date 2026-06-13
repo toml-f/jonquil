@@ -45,6 +45,7 @@ add_library(
   "${PROJECT_NAME}-lib"
   "${srcs}"
 )
+add_library("${PROJECT_NAME}::${PROJECT_NAME}-lib" ALIAS "${PROJECT_NAME}-lib")
 target_link_libraries(
   "${PROJECT_NAME}-lib"
   PUBLIC
@@ -72,6 +73,7 @@ endif()
 
 # Export targets for other projects
 add_library("${PROJECT_NAME}" INTERFACE)
+add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS "${PROJECT_NAME}")
 target_link_libraries("${PROJECT_NAME}" INTERFACE "${PROJECT_NAME}-lib")
 install(
   TARGETS
