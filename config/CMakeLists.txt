@@ -12,7 +12,7 @@
 # limitations under the License.
 
 option(BUILD_SHARED_LIBS "Whether the libraries built should be shared" FALSE)
-option(ENABLE_TESTING "Whether the libraries built should be tested" TRUE)
+set(JONQUIL_USE_TOMLF TRUE)
 
 set(
   "${PROJECT_NAME}-module-dir"
@@ -49,7 +49,7 @@ install(
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/template.cmake"
+  "${CMAKE_CURRENT_SOURCE_DIR}/template-config.cmake"
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
   INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
 )

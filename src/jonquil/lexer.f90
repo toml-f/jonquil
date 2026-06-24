@@ -11,6 +11,30 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
+!> JSON lexer/tokenizer implementation.
+!>
+!> This module provides the [[json_lexer]] type which tokenizes JSON input
+!> into a stream of tokens for the parser. The lexer extends the abstract
+!> lexer interface from TOML Fortran, inserting a prelude of tokens to wrap
+!> JSON data in a pseudo-TOML structure for compatibility with the TOML parser.
+!>
+!> ## Supported JSON Tokens
+!>
+!> - Strings (double-quoted with escape sequences)
+!> - Numbers (integers and floating-point, including exponential notation)
+!> - Booleans (`true`, `false`)
+!> - Null (`null`)
+!> - Structural characters (`{`, `}`, `[`, `]`, `:`, `,`)
+!>
+!> ## Usage
+!>
+!> The lexer is typically not used directly. Instead, use [[json_load]] or
+!> [[json_loads]] from the [[jonquil]] module.
+!>
+!> ```fortran
+!> type(json_lexer) :: lexer
+!> call new_lexer_from_string(lexer, '{"key": 123}')
+!> ```
 module jonquil_lexer
    use tomlf_constants, only : tfc, tfi, tfr, toml_escape
    use tomlf_datetime, only : toml_datetime

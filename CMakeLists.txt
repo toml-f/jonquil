@@ -17,18 +17,19 @@ get_directory_property(is-subproject PARENT_DIRECTORY)
 project(
   "jonquil"
   LANGUAGES "Fortran"
-  VERSION "0.3.0"
+  VERSION "0.3.1"
   DESCRIPTION "Bringing TOML blooms to JSON land"
 )
 
 # Follow GNU conventions for installing directories
 include(GNUInstallDirs)
+include(CTest) # option(BUILD_TESTING). ON by default.
 
 # General configuration information
 add_subdirectory("config")
 
 # Collect subprojects
-if(NOT TARGET "test-drive::test-drive" AND ENABLE_TESTING)
+if(NOT TARGET "test-drive::test-drive" AND BUILD_TESTING)
   find_package("test-drive" REQUIRED)
 endif()
 if(NOT TARGET "toml-f::toml-f")
@@ -44,6 +45,7 @@ add_library(
   "${PROJECT_NAME}-lib"
   "${srcs}"
 )
+add_library("${PROJECT_NAME}::${PROJECT_NAME}-lib" ALIAS "${PROJECT_NAME}-lib")
 target_link_libraries(
   "${PROJECT_NAME}-lib"
   PUBLIC
@@ -71,6 +73,7 @@ endif()
 
 # Export targets for other projects
 add_library("${PROJECT_NAME}" INTERFACE)
+add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS "${PROJECT_NAME}")
 target_link_libraries("${PROJECT_NAME}" INTERFACE "${PROJECT_NAME}-lib")
 install(
   TARGETS
@@ -101,7 +104,7 @@ install(
   DESTINATION "${CMAKE_INSTALL_DATADIR}/licenses/${PROJECT_NAME}"
 )
 
-if(ENABLE_TESTING)
+if(BUILD_TESTING)
   # add the testsuite
   enable_testing()
   add_subdirectory("test")

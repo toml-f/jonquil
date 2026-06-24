@@ -14,7 +14,7 @@
 set(_lib "test-drive")
 set(_pkg "TEST_DRIVE")
 set(_url "https://github.com/fortran-lang/test-drive")
-set(_rev "v0.4.0")
+set(_rev "v0.6.0")
 
 if(NOT DEFINED "${_pkg}_FIND_METHOD")
   if(DEFINED "${PROJECT_NAME}-dependency-method")
@@ -70,8 +70,10 @@ foreach(method in ITEMS ${${_pkg}_FIND_METHOD})
         "${${_pkg}_BINARY_DIR}"
         )
 
-      add_library("${_lib}::${_lib}" INTERFACE IMPORTED)
-      target_link_libraries("${_lib}::${_lib}" INTERFACE "${_lib}")
+      if(NOT TARGET "${_lib}::${_lib}")
+        add_library("${_lib}::${_lib}" INTERFACE IMPORTED)
+        target_link_libraries("${_lib}::${_lib}" INTERFACE "${_lib}")
+      endif()
 
       # We need the module directory in the subproject before we finish the configure stage
       if(NOT EXISTS "${${_pkg}_BINARY_DIR}/include")
@@ -92,8 +94,10 @@ foreach(method in ITEMS ${${_pkg}_FIND_METHOD})
       )
     FetchContent_MakeAvailable("${_lib}")
 
-    add_library("${_lib}::${_lib}" INTERFACE IMPORTED)
-    target_link_libraries("${_lib}::${_lib}" INTERFACE "${_lib}")
+    if(NOT TARGET "${_lib}::${_lib}")
+      add_library("${_lib}::${_lib}" INTERFACE IMPORTED)
+      target_link_libraries("${_lib}::${_lib}" INTERFACE "${_lib}")
+    endif()
 
     # We need the module directory in the subproject before we finish the configure stage
     FetchContent_GetProperties("${_lib}" BINARY_DIR "${_pkg}_BINARY_DIR")

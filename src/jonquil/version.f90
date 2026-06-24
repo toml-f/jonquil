@@ -11,7 +11,7 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-!> Version information on jonquil
+!> Version information for the Jonquil library.
 module jonquil_version
    implicit none
    private
@@ -21,7 +21,7 @@ module jonquil_version
 
 
    !> String representation of the jonquil version
-   character(len=*), parameter :: jonquil_version_string = "0.3.0"
+   character(len=*), parameter :: jonquil_version_string = "0.3.1"
 
    !> Major version number of the above jonquil version
    integer, parameter :: jonquil_major = 0
@@ -30,7 +30,7 @@ module jonquil_version
    integer, parameter :: jonquil_minor = 3
 
    !> Patch version number of the above jonquil version
-   integer, parameter :: jonquil_patch = 0
+   integer, parameter :: jonquil_patch = 1
 
    !> Compact numeric representation of the jonquil version
    integer, parameter :: jonquil_version_compact = &

@@ -1,5 +1,5 @@
 name = "jonquil"
-version = "0.3.0"
+version = "0.3.1"
 license = "Apache-2.0 OR MIT"
 maintainer = ["@awvwgk"]
 author = ["Sebastian Ehlert"]
@@ -10,10 +10,37 @@ description = "Bringing TOML blooms to JSON land"
 
 [dependencies]
 toml-f.git = "https://github.com/toml-f/toml-f"
-toml-f.tag = "v0.4.1"
+toml-f.tag = "v0.5.1"
 
 [[test]]
 name = "jqtest"
 source-dir = "test/unit"
 [test.dependencies]
 test-drive.git = "https://github.com/fortran-lang/test-drive.git"
+
+[extra.ford]
+project = "Jonquil"
+summary = "Bringing TOML blooms to JSON land - JSON parser and serializer for Fortran"
+favicon = "./assets/jonquil.svg"
+project_github = "https://github.com/toml-f/jonquil"
+project_download = "https://github.com/toml-f/jonquil/releases"
+project_website = "https://toml-f.readthedocs.io/en/latest/how-to/jonquil.html"
+author = "Sebastian Ehlert"
+github = "https://github.com/awvwgk"
+src_dir = ["./src"]
+exclude_dir = ["./test"]
+media_dir = "./assets"
+docmark = "<"
+predocmark = ">"
+source = true
+graph = true
+sort = "alpha"
+print_creation_date = true
+creation_date = "%Y-%m-%d %H:%M %z"
+md_extensions = ["markdown.extensions.toc", "markdown.extensions.smarty"]
+
+[extra.ford.external]
+toml-f = "https://toml-f.github.io/toml-f/"
+
+[extra.ford.extra_mods]
+iso_fortran_env = "https://gcc.gnu.org/onlinedocs/gfortran/ISO_005fFORTRAN_005fENV.html"
