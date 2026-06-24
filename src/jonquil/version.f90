@@ -21,7 +21,7 @@ module jonquil_version
 
 
    !> String representation of the jonquil version
-   character(len=*), parameter :: jonquil_version_string = "0.3.1"
+   character(len=*), parameter :: jonquil_version_string = "0.3.2"
 
    !> Major version number of the above jonquil version
    integer, parameter :: jonquil_major = 0
@@ -30,7 +30,7 @@ module jonquil_version
    integer, parameter :: jonquil_minor = 3
 
    !> Patch version number of the above jonquil version
-   integer, parameter :: jonquil_patch = 1
+   integer, parameter :: jonquil_patch = 2
 
    !> Compact numeric representation of the jonquil version
    integer, parameter :: jonquil_version_compact = &
