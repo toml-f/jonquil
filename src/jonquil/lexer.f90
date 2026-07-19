@@ -121,7 +121,7 @@ subroutine new_lexer_from_unit(lexer, io, error)
 
    case("sequential", "SEQUENTIAL")
       allocate(character(0) :: source)
-      do 
+      do
          call read_whole_line(io, line, stat)
          if (stat > 0) exit
          source = source // line // toml_escape%newline
@@ -207,8 +207,9 @@ subroutine next_token(lexer, token)
    case(" ", toml_escape%tabulator, toml_escape%newline, toml_escape%carriage_return)
       do pos = pos, len(lexer%chunk) - 1
          if (all(lexer%chunk(pos+1:pos+1) /= [" ", toml_escape%tabulator,&
-            & toml_escape%newline, toml_escape%carriage_return])) &
-            & exit
+            & toml_escape%newline, toml_escape%carriage_return])) then
+           exit
+         end if
       end do
 
       token = toml_token(token_kind%whitespace, prev, pos)
@@ -505,6 +506,7 @@ subroutine extract_float(lexer, token, val)
    if (token%kind /= token_kind%float) return
 
    read(lexer%chunk(token%first:token%last), *, iostat=stat) val
+   if (stat /= 0) val = ieee_value(val, ieee_quiet_nan)
 end subroutine extract_float
 
 !> Extract boolean value of token

@@ -50,9 +50,9 @@
 module jonquil_ser
    use tomlf_constants
    use tomlf_datetime
+   use tomlf_error, only : toml_error, toml_stat, make_error
    use tomlf_type, only : toml_value, toml_visitor, toml_key, toml_table, &
       & toml_array, toml_keyval, is_array_of_tables, len
-   use tomlf_error, only : toml_error, toml_stat, make_error
    use tomlf_utils, only : to_string
    implicit none
    private
@@ -179,7 +179,7 @@ subroutine json_dump_to_unit(val, io, error, config)
 
    call json_dumps(val, string, error, config=config)
    if (allocated(error)) return
-   write(io, '(a)', iostat=stat, iomsg=msg) string
+   write(io, "(a)", iostat=stat, iomsg=msg) string
    if (stat /= 0) then
       call make_error(error, trim(msg))
       return
@@ -394,11 +394,11 @@ subroutine visit_table(visitor, table)
    visitor%depth = visitor%depth - 1
    call indent(visitor)
    if (visitor%depth == 0) then
-      if (allocated(visitor%config%indent)) visitor%output = visitor%output // new_line('a')
-      visitor%output = visitor%output // "}" // new_line('a')
+      if (allocated(visitor%config%indent)) visitor%output = visitor%output // new_line("a")
+      visitor%output = visitor%output // "}" // new_line("a")
    else
       visitor%output = visitor%output // "}"
-   endif
+   end if
 
 end subroutine visit_table
 
@@ -415,7 +415,7 @@ subroutine indent(self)
    ! write(self%unit, '(/, a)', advance='no') repeat(self%config%indent, self%depth)
    ! causes: NVFORTRAN-F-0000-Internal compiler error. Errors in Lowering      16
    if (allocated(self%config%indent) .and. self%depth > 0) then
-      self%output = self%output // new_line('a') // repeat(self%config%indent, self%depth)
+      self%output = self%output // new_line("a") // repeat(self%config%indent, self%depth)
    end if
 
 end subroutine indent
@@ -432,17 +432,17 @@ subroutine escape_string(raw, escaped)
 
    integer :: i
 
-   escaped = ''
+   escaped = ""
    do i = 1, len(raw)
       select case(raw(i:i))
       case default; escaped = escaped // raw(i:i)
-      case('\'); escaped = escaped // '\\'
+      case("\"); escaped = escaped // "\\"
       case('"'); escaped = escaped // '\"'
-      case(TOML_NEWLINE); escaped = escaped // '\n'
-      case(TOML_FORMFEED); escaped = escaped // '\f'
-      case(TOML_CARRIAGE_RETURN); escaped = escaped // '\r'
-      case(TOML_TABULATOR); escaped = escaped // '\t'
-      case(TOML_BACKSPACE); escaped = escaped // '\b'
+      case(TOML_NEWLINE); escaped = escaped // "\n"
+      case(TOML_FORMFEED); escaped = escaped // "\f"
+      case(TOML_CARRIAGE_RETURN); escaped = escaped // "\r"
+      case(TOML_TABULATOR); escaped = escaped // "\t"
+      case(TOML_BACKSPACE); escaped = escaped // "\b"
       end select
    end do
 
