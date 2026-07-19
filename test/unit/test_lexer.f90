@@ -12,10 +12,11 @@
 ! limitations under the License.
 
 module test_lexer
-   use testdrive
    use jonquil_lexer
+   use testdrive
    use tomlf_constants, only : tfi, tfr, nl => TOML_NEWLINE
    implicit none
+   private
 
    public :: collect_lexer
 
@@ -388,8 +389,8 @@ subroutine token_bool(error)
 end subroutine token_bool
 
 subroutine check_token(error, string, expected)
-   use tomlf_diagnostic, only : render, toml_label, toml_level
    use tomlf_de_token, only : stringify
+   use tomlf_diagnostic, only : render, toml_label, toml_level
    use tomlf_terminal, only : toml_terminal
    !> Error handling
    type(error_type), allocatable, intent(out) :: error
@@ -422,7 +423,7 @@ subroutine check_token(error, string, expected)
    end do
    if (.not.allocated(error)) then
       msg = render(string//nl, label, toml_terminal(.true.))
-      print '(a)', msg
+      print "(a)", msg
    end if
 end subroutine check_token
 

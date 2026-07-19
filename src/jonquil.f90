@@ -47,6 +47,11 @@
 !>   see [`get_value`](https://toml-f.github.io/toml-f/interface/get_value.html)
 !>   and [`set_value`](https://toml-f.github.io/toml-f/interface/set_value.html)
 module jonquil
+   use jonquil_parser, only : json_load, json_loads
+   use jonquil_ser, only : json_serializer, json_serialize, json_dump, json_dumps, &
+      & json_ser_config
+   use jonquil_version, only : jonquil_version_string, jonquil_version_compact, &
+      & get_jonquil_version
    use tomlf, only : get_value, set_value, json_path => toml_path, &
       & json_context => toml_context, json_parser_config => toml_parser_config, &
       & json_level => toml_level, json_error => toml_error, json_stat => toml_stat, &
@@ -55,11 +60,6 @@ module jonquil
       & new_object => new_table, add_object => add_table, add_array, add_keyval, sort, len
    use tomlf_type, only : cast_to_object => cast_to_table, cast_to_array, cast_to_keyval
    use tomlf_version, only : tomlf_version_string, tomlf_version_compact, get_tomlf_version
-   use jonquil_version, only : jonquil_version_string, jonquil_version_compact, &
-      & get_jonquil_version
-   use jonquil_parser, only : json_load, json_loads
-   use jonquil_ser, only : json_serializer, json_serialize, json_dump, json_dumps, &
-      & json_ser_config
    implicit none
    public
 
