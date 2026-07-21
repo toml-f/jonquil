@@ -156,11 +156,16 @@ subroutine get_info(lexer, meta, output)
    !> Metadata about the source
    character(:, tfc), allocatable, intent(out) :: output
 
+   allocate(character(len=0, kind=tfc) :: output)
+   output = ""
+
    select case(meta)
    case("source")
       output = lexer%chunk // toml_escape%newline
    case("filename")
       if (allocated(lexer%filename)) output = lexer%filename
+   case default
+      continue
    end select
 end subroutine get_info
 
@@ -244,6 +249,8 @@ subroutine next_token(lexer, token)
    case(",")
       token = toml_token(token_kind%comma, prev, pos)
       return
+   case default
+      continue
    end select
 
    do pos=pos,len(lexer%chunk)-1
@@ -450,12 +457,16 @@ subroutine extract_string(lexer, token, string)
             case("n"); string = string // toml_escape%newline
             case("r"); string = string // toml_escape%carriage_return
             case("f"); string = string // toml_escape%formfeed
+            case default
+               continue
             end select
             cycle
          end if
          escape = ch == toml_escape%backslash
          if (.not.escape) string = string // ch
       end do
+   case default
+      string = "_"
    end select
 end subroutine extract_string
 

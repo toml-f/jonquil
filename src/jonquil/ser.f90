@@ -48,8 +48,9 @@
 !> print '(a)', str
 !> ```
 module jonquil_ser
-   use tomlf_constants
-   use tomlf_datetime
+   use tomlf_constants, only : tfc, tfi, tfr, toml_type, TOML_NEWLINE, TOML_FORMFEED, &
+      & TOML_CARRIAGE_RETURN, TOML_TABULATOR, TOML_BACKSPACE
+   use tomlf_datetime, only : toml_datetime
    use tomlf_error, only : toml_error, toml_stat, make_error
    use tomlf_type, only : toml_value, toml_visitor, toml_key, toml_table, &
       & toml_array, toml_keyval, is_array_of_tables, len
