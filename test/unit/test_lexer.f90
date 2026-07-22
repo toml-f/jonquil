@@ -12,9 +12,9 @@
 ! limitations under the License.
 
 module test_lexer
-   use jonquil_lexer
-   use testdrive
-   use tomlf_constants, only : tfi, tfr, nl => TOML_NEWLINE
+   use jonquil_lexer, only : json_lexer, new_lexer_from_string, toml_token, token_kind
+   use testdrive, only : error_type, new_unittest, unittest_type, check
+   use tomlf_constants, only : tfi, tfr, tfc, nl => TOML_NEWLINE
    implicit none
    private
 
@@ -40,6 +40,7 @@ subroutine collect_lexer(testsuite)
       & new_unittest("colon", colon), &
       & new_unittest("empty", empty), &
       & new_unittest("equal", equal), &
+      & new_unittest("info-filename", info_filename), &
       & new_unittest("float-point", float_point), &
       & new_unittest("float-exponent", float_exponent), &
       & new_unittest("float-zero", float_zero), &
@@ -141,6 +142,20 @@ subroutine equal(error)
    call check_token(error, "=", &
       & [token_kind%invalid, token_kind%eof])
 end subroutine equal
+
+subroutine info_filename(error)
+   !> Error handling
+   type(error_type), allocatable, intent(out) :: error
+
+   type(json_lexer) :: lexer
+   character(:, tfc), allocatable :: info
+
+   call new_lexer_from_string(lexer, "{}")
+   call lexer%get_info("filename", info)
+   call check(error, allocated(info), .true.)
+   if (allocated(error)) return
+   call check(error, info, "")
+end subroutine info_filename
 
 subroutine string(error)
    !> Error handling
