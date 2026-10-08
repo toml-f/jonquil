@@ -15,6 +15,7 @@
 program tester
    use, intrinsic :: iso_fortran_env, only : error_unit
    use test_lexer, only : collect_lexer
+   use test_serializer, only : collect_serializer
    use testdrive, only : run_testsuite, new_testsuite, testsuite_type, &
       & select_suite, run_selected, get_argument
    implicit none
@@ -26,7 +27,8 @@ program tester
    stat = 0
 
    testsuites = [ &
-      & new_testsuite("lexer", collect_lexer) &
+      & new_testsuite("lexer", collect_lexer), &
+      & new_testsuite("serializer", collect_serializer) &
       & ]
 
    call get_argument(1, suite_name)

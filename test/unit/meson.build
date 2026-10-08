@@ -20,6 +20,7 @@ testdrive_dep = dependency(
 
 unittests = [
   'lexer',
+  'serializer',
 ]
 
 test_srcs = files('main.f90')

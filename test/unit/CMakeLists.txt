@@ -19,6 +19,7 @@ set(
   test-srcs
   "main.f90"
   "test_lexer.f90"
+  "test_serializer.f90"
 )
 
 add_executable(

@@ -334,8 +334,8 @@ subroutine visit_array(visitor, array)
    type(toml_array), intent(inout) :: array
 
    class(toml_value), pointer :: ptr
-   character(kind=tfc, len=:), allocatable :: key
-   integer :: i, n
+   character(kind=tfc, len=:), allocatable :: key, buffer
+   integer :: i, n, used
 
    call indent(visitor)
 
@@ -345,16 +345,23 @@ subroutine visit_array(visitor, array)
    end if
 
    visitor%output = visitor%output // "["
+   used = 0
+   call append_output(buffer, used, visitor%output)
    visitor%depth = visitor%depth + 1
    n = len(array)
    do i = 1, n
       call array%get(i, ptr)
+      visitor%output = ""
       call ptr%accept(visitor)
-      if (i /= n) visitor%output = visitor%output // ","
+      call append_output(buffer, used, visitor%output)
+      if (i /= n) call append_output(buffer, used, ",")
    end do
    visitor%depth = visitor%depth - 1
+   visitor%output = ""
    call indent(visitor)
    visitor%output = visitor%output // "]"
+   call append_output(buffer, used, visitor%output)
+   visitor%output = buffer(:used)
 
 end subroutine visit_array
 
@@ -370,8 +377,8 @@ subroutine visit_table(visitor, table)
 
    class(toml_value), pointer :: ptr
    type(toml_key), allocatable :: list(:)
-   character(kind=tfc, len=:), allocatable :: key
-   integer :: i, n
+   character(kind=tfc, len=:), allocatable :: key, buffer
+   integer :: i, n, used
 
    call indent(visitor)
 
@@ -381,6 +388,8 @@ subroutine visit_table(visitor, table)
    end if
 
    visitor%output = visitor%output // "{"
+   used = 0
+   call append_output(buffer, used, visitor%output)
    visitor%depth = visitor%depth + 1
 
    call table%get_keys(list)
@@ -388,11 +397,14 @@ subroutine visit_table(visitor, table)
    n = size(list, 1)
    do i = 1, n
       call table%get(list(i)%key, ptr)
+      visitor%output = ""
       call ptr%accept(visitor)
-      if (i /= n) visitor%output = visitor%output // ","
+      call append_output(buffer, used, visitor%output)
+      if (i /= n) call append_output(buffer, used, ",")
    end do
 
    visitor%depth = visitor%depth - 1
+   visitor%output = ""
    call indent(visitor)
    if (visitor%depth == 0) then
       if (allocated(visitor%config%indent)) visitor%output = visitor%output // new_line("a")
@@ -400,8 +412,32 @@ subroutine visit_table(visitor, table)
    else
       visitor%output = visitor%output // "}"
    end if
+   call append_output(buffer, used, visitor%output)
+   visitor%output = buffer(:used)
 
 end subroutine visit_table
+
+
+!> Append without copying the complete document for each array or table entry.
+subroutine append_output(buffer, used, text)
+   character(kind=tfc, len=:), allocatable, intent(inout) :: buffer
+   integer, intent(inout) :: used
+   character(kind=tfc, len=*), intent(in) :: text
+
+   character(kind=tfc, len=:), allocatable :: grown
+   integer :: required, capacity
+
+   required = used + len(text)
+   capacity = 0
+   if (allocated(buffer)) capacity = len(buffer)
+   if (required > capacity) then
+      allocate(character(kind=tfc, len=max(required, max(256, 2*capacity))) :: grown)
+      if (used > 0) grown(:used) = buffer(:used)
+      call move_alloc(grown, buffer)
+   end if
+   if (required > used) buffer(used+1:required) = text
+   used = required
+end subroutine append_output
 
 
 !> Produce indentations for emitted JSON documents
